@@ -1,2 +1,2 @@
 # tcp_client
-Maybe make this a python package? Idunno?!
+I have not tested the python implementation but the C Code works on Linux at least.
