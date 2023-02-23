@@ -8,7 +8,7 @@
 #include <unistd.h>
 
 
-int establish_connection(char* address, int port)
+int connect(char* address, int port)
 {
     int sock;
     struct sockaddr_in serveraddress;
@@ -62,24 +62,19 @@ char* receives(int sock)
 
 int main()
 {
-	int sock;
+    int sock;
 
-	// allow sending of messages
-    sock = establish_connection("192.168.1.115", 42068);
+    // allow sending of messages
+    sock = connect("192.168.1.115", 42068);
 
     // send message to server
     sends(sock, "Hello World!\n");
-    sends(sock, "Bye World!\n");
-    sends(sock, "World!\n");
-    sends(sock, "Hey!\n");
-    sends(sock, "Bye\n");
 
     // receive message from server
-    while(1)
     receives(sock);
 
-	// close socket
-	close(sock);
+    // close socket
+    close(sock);
 
-	return 0;
+    return 0;
 }
