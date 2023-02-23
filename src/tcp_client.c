@@ -1,11 +1,11 @@
-#include <arpa/inet.h> // inet_addr()
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h> // bzero()
+#include <strings.h>
 #include <sys/socket.h>
-#include <unistd.h> // read(), write(), close()
+#include <unistd.h>
 
 
 int establish_connection(char* address, int port)
