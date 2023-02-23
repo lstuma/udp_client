@@ -12,36 +12,36 @@ int connect(char* address, int port)
 {
     int sock;
     struct sockaddr_in serveraddress;
-	struct sockaddr_in client;
+    struct sockaddr_in client;
 
-	// create socket
-	sock = socket(AF_INET, SOCK_STREAM, 0);
-	// check that socket works
-	if (sock == -1) {
-		printf("[!] An error has occured while trying to create socket on local machine - Exiting!\n");
-		return -1;
-	}
-	else
-		printf("[+] Socket has successfully been created..\n");
+    // create socket
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    // check that socket works
+    if (sock == -1) {
+        printf("[!] An error has occured while trying to create socket on local machine - Exiting!\n");
+        return -1;
+    }
+    else
+        printf("[+] Socket has successfully been created..\n");
 
-	// set 0
-	bzero(&serveraddress, sizeof(serveraddress));
+    // set 0
+    bzero(&serveraddress, sizeof(serveraddress));
 
-	// assign address family (ipv4), address, port
-	serveraddress.sin_family = AF_INET;
-	serveraddress.sin_addr.s_addr = inet_addr(address);
-	serveraddress.sin_port = htons(port);
+    // assign address family (ipv4), address, port
+    serveraddress.sin_family = AF_INET;
+    serveraddress.sin_addr.s_addr = inet_addr(address);
+    serveraddress.sin_port = htons(port);
 
-	// connect to server
-	if(!connect(sock, (struct sockaddr*)&serveraddress, sizeof(serveraddress)))
-	{
-		printf("[+] Connection successfull..\n");
-		return sock;
-	}
-	else {
-		printf("[!] Connection failed - Extiting!\n");
-		exit(0); return -1;
-	}
+    // connect to server
+    if(!connect(sock, (struct sockaddr*)&serveraddress, sizeof(serveraddress)))
+    {
+        printf("[+] Connection successfull..\n");
+        return sock;
+    }
+    else {
+        printf("[!] Connection failed - Extiting!\n");
+        exit(0); return -1;
+    }
 }
 
 int sends(int sock, char* msg)
