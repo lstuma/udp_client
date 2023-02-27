@@ -4,10 +4,10 @@ Python TCP Client
 ## How to use
 
 ### Connecting to server
-´´´
+```
 import tcp_client as tcp
 socket = tcp.connect('127.0.0.1', 7777)
-´´´
+```
 
 ### Sending packet
 ```
