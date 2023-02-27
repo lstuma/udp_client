@@ -6,48 +6,89 @@
 
 // Function declarations
 
-int connect(char* address, int port);
-int sends(int sock, char* msg);
-char* receives(int sock);
+int tcpconnect(char* address, int port);
+int tcpsend(int sock, char* msg);
+int tcpclose(int sock);
+char* tcpreceive(int sock, char* msg_out);
 
 // Python functions
 
 static PyObject* _send(PyObject* self, PyObject* args)
 {
-  return PyUnicode_FromString("NOT IMPLEMENTED");
-}
-
-static PyObject* _receive(PyObject* self, PyObject* args)
-{
-  return PyUnicode_FromString("NOT IMPLEMENTED");
-}
-
-static PyObject* _connect(PyObject* self, PyObject* args)
-{
-  PyObject* _address; PyObject* _port;
+  PyObject* _msg; PyObject* sock;
 
   if(args == NULL) return NULL;
 
   // Parse argumentss
-  if(!PyArg_ParseTuple(args, "si", &_address, &_port)) return NULL;
-
-  // port
-  port = PyLong_AsLong(_port);
+  if(!PyArg_ParseTuple(args, "U|i", &_msg, &sock)) return NULL;
 
   // check if argument is even a string
-  if(!PyString_Check(_address)) return NULL;
+  if(!PyUnicode_Check(_msg)) return NULL;
+
+  // message
+  char* msg = NULL;
+
+  // get the address
+  msg = PyUnicode_AsUTF8(_msg);
+
+  tcpsend(sock, msg);
+
+  return PyLong_FromLong(1);
+}
+
+static PyObject* _receive(PyObject* self, PyObject* args)
+{
+  PyObject* sock;
+
+  if(args == NULL) return NULL;
+
+  // Parse argumentss
+  if(!PyArg_ParseTuple(args, "i", &sock)) return NULL;
+
+  char msg[1024];
+  bzero(msg, sizeof(msg));
+
+  tcpreceive(sock, msg);
+
+  if(msg) return PyUnicode_FromString(msg);
+  else return NULL;
+}
+
+
+static PyObject* _close(PyObject* self, PyObject* args)
+{
+  PyObject* sock;
+
+  if(args == NULL) return NULL;
+
+  // Parse argumentss
+  if(!PyArg_ParseTuple(args, "i", &sock)) return NULL;
+
+  return PyBool_FromLong(tcpclose(sock));
+}
+
+static PyObject* _connect(PyObject* self, PyObject* args)
+{
+  PyObject* _address; PyObject* port;
+
+  if(args == NULL) return NULL;
+
+  // Parse argumentss
+  if(!PyArg_ParseTuple(args, "U|i", &_address, &port)) return NULL;
+
+  // check if argument is even a string
+  if(!PyUnicode_Check(_address)) return NULL;
 
   // address
   char* address = NULL;
 
   // get the address
-  address = PyString_AsString(_address);
-
+  address = PyUnicode_AsUTF8(_address);
   // connect
-  sock = connect(address, port);
+  int sock = tcpconnect(address, port);
 
   // return the socket
-  return PyLong_fromLong(sock);
+  return PyLong_FromLong(sock);
 }
 
 // Method definition
@@ -55,6 +96,7 @@ static struct PyMethodDef methods[] = {
     {"connect", (PyCFunction)_connect, METH_VARARGS},
     {"send", (PyCFunction)_send, METH_VARARGS},
     {"receive", (PyCFunction)_receive, METH_VARARGS},
+    {"close", (PyCFunction)_close, METH_VARARGS},
     {NULL, NULL, NULL}
 };
 
@@ -69,6 +111,5 @@ static struct PyModuleDef module = {
 
 // Initialize module
 PyMODINIT_FUNC PyInit_tcp_client(void) {
-  init();
   return PyModule_Create(&module);
 }
