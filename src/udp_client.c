@@ -39,41 +39,19 @@ int udpsend(int sock, char* msg, char* address, short int port)
     makeaddress(address, port, &serveraddress);
 
     int pos = 0; int length = strlen(msg);
-    printf("LENGTH: %d\n", length);
     while(pos < length) {
-        printf("[*] Sending: %s\n", msg+pos);
         pos += sendto(sock, msg+pos, strlen(msg+pos), MSG_CONFIRM, (struct sockaddr*)&serveraddress, sizeof(serveraddress));
     }
 }
 
-void udpreceive(int sock, char* msg_out, char* address)
+void udpreceive(int sock, char* msg_out)
 {
-    // source address (port does not matter here)
-    struct sockaddr_in serveraddress;
-    makeaddress(address, 65535, &serveraddress);
-
     int pos = 0;
-    pos += recvfrom(sock, msg_out, strlen(msg_out), 4096, MSG_WAITALL, (struct sockaddr*)&serveraddress);
+    pos += read(sock, msg_out, 4096);
 }
 
 int udpclose(int sock)
 {
   // Returns 1 if successful, otherwise returns 0
   return 1+close(sock);
-}
-
-int main()
-{
-    int sock;
-
-    // allow sending of messages
-    sock = udpopen();
-
-    // send message to server
-    udpsend(sock, "Hello Server!\n", "192.168.1.115", 42068);
-
-    // close socket
-    close(sock);
-
-    return 0;
 }

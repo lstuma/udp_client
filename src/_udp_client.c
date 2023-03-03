@@ -9,7 +9,7 @@
 int udpopen();
 int udpsend(int sock, char* msg, char* address, short int port);
 int udpclose(int sock);
-char* udpreceive(int sock, char* msg_out, char* address);
+char* udpreceive(int sock, char* msg_out);
 
 // Python functions
 
@@ -20,7 +20,7 @@ static PyObject* _send(PyObject* self, PyObject* args)
   if(args == NULL) return NULL;
 
   // Parse argumentss
-  if(!PyArg_ParseTuple(args, "U|U|i|i", &_address, &_msg, &port, &sock)) return NULL;
+  if(!PyArg_ParseTuple(args, "U|U|i|i", &_msg, &_address, &port, &sock)) return NULL;
 
   // check if argument is even a string
   if(!PyUnicode_Check(_msg) || !PyUnicode_Check(_address)) return NULL;
@@ -46,27 +46,17 @@ static PyObject* _send(PyObject* self, PyObject* args)
 
 static PyObject* _receive(PyObject* self, PyObject* args)
 {
-  PyObject* _address; PyObject* sock;
+  PyObject* sock;
 
   if(args == NULL) return NULL;
 
   // Parse argumentss
-  if(!PyArg_ParseTuple(args, "U|i", &sock)) return NULL;
-
-  // check if argument is even a string
-  if(!PyUnicode_Check(_address)) return NULL;
-
-  // address
-  char* address = NULL;
-
-  // get the address
-  address = PyUnicode_AsUTF8(_address);
-
+  if(!PyArg_ParseTuple(args, "i", &sock)) return NULL;
 
   char msg[4096];
   bzero(msg, sizeof(msg));
 
-  udpreceive(sock, msg, address);
+  udpreceive(sock, msg);
 
   if(msg) return PyUnicode_FromString(msg);
   else return NULL;
