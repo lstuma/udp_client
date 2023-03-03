@@ -1,25 +1,25 @@
-# tcp_client
-Python TCP Client
+# udp_client
+Python UDP Client
 
 ## How to use
 
 ### Connecting to server
-```
-import tcp_client as tcp
-socket = tcp.connect('127.0.0.1', 7777)
+```Python
+import udp_client as udp
+socket = udp.open()
 ```
 
 ### Sending packet
-```
-tcp.send("Hello Server!", socket)
+```Python
+udp.send("Hello Server!", socket, '127.0.0.1', 7777)
 ```
 
 ### Receiving Packets
-```
-print(tcp.receive(socket))
+```Python
+print(udp.receive(socket))
 ```
 
 ### Closing connection
-```
-tcp.close(socket)
+```Python
+udp.close(socket)
 ```
