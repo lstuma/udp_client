@@ -11,7 +11,7 @@ socket = udp.open()
 
 ### Sending packet
 ```Python
-udp.send("Hello Server!", socket, '127.0.0.1', 7777)
+udp.send("Hello Server!", '127.0.0.1', 7777, socket)
 ```
 
 ### Receiving Packets
