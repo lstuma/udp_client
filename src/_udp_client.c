@@ -20,7 +20,7 @@ static PyObject* _send(PyObject* self, PyObject* args)
   if(args == NULL) return NULL;
 
   // Parse argumentss
-  if(!PyArg_ParseTuple(args, "U|U|i|i", &_address, &_msg, &port, &sock)) return NULL;
+  if(!PyArg_ParseTuple(args, "U|U|i|i", &_msg, &_address, &port, &sock)) return NULL;
 
   // check if argument is even a string
   if(!PyUnicode_Check(_msg) || !PyUnicode_Check(_address)) return NULL;
