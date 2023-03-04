@@ -13,7 +13,7 @@ int udpopen()
     int sock;
 
     // create socket
-    sock = socket(AF_INET, SOCK_DGRAM, 0);
+    sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     // check that socket works
     if (sock == -1)
         return 0;
@@ -44,10 +44,11 @@ int udpsend(int sock, char* msg, char* address, short int port)
     }
 }
 
-void udpreceive(int sock, char* msg_out)
+void udpreceive(int sock, char* msg_out, struct sockaddr_storage* source_address, socklen_t* source_address_length)
 {
-    int pos = 0;
-    pos += read(sock, msg_out, 4096);
+
+    // Receive message and set source address
+    recvfrom(sock, msg_out, 4096, 0, (struct sockaddr*) source_address, &source_address_length);
 }
 
 int udpclose(int sock)

@@ -3,13 +3,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
+#include <arpa/inet.h>
 
 // Function declarations
 
 int udpopen();
 int udpsend(int sock, char* msg, char* address, short int port);
 int udpclose(int sock);
-char* udpreceive(int sock, char* msg_out);
+char* udpreceive(int sock, char* msg_out, struct sockaddr_storage* source_address, socklen_t* souce_address_length);
 
 // Python functions
 
@@ -53,13 +54,27 @@ static PyObject* _receive(PyObject* self, PyObject* args)
   // Parse argumentss
   if(!PyArg_ParseTuple(args, "i", &sock)) return NULL;
 
+  // Message received
   char msg[4096];
   bzero(msg, sizeof(msg));
 
-  udpreceive(sock, msg);
+  // Source address
+  struct sockaddr_in source_address;
+  socklen_t source_address_length = sizeof(source_address);
 
-  if(msg) return PyUnicode_FromString(msg);
-  else return NULL;
+  // Receive message
+  udpreceive(sock, msg, &source_address, &source_address_length);
+
+  // Receiving message failed
+  if(!msg) return NULL;
+
+  // Output tuple
+  PyObject* output_tuple = PyTuple_New(3);
+  PyTuple_SetItem(output_tuple, 0, PyUnicode_FromString(msg));
+  PyTuple_SetItem(output_tuple, 1, PyUnicode_FromString(inet_ntoa(source_address.sin_addr)));
+  PyTuple_SetItem(output_tuple, 2, PyLong_FromLong(ntohs(source_address.sin_port)));
+
+  return output_tuple;
 }
 
 
