@@ -16,7 +16,7 @@ udp.send("Hello Server!", '127.0.0.1', 7777, socket)
 
 ### Receiving Packets
 ```Python
-print(udp.receive(socket))
+msg, source_address, source_port = udp.receive(socket)
 ```
 
 ### Closing connection
